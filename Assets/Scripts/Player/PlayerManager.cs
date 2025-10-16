@@ -1,23 +1,37 @@
 using System;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Serialization;
 
 public class PlayerManager : MonoBehaviour
 {
-    [SerializeField] private MoveHandler moveHandler;
-    private void OnEnable()
+    [SerializeField] NavMeshAgent agent;
+    [SerializeField] LayerMask groundLayer;
+    
+    private bool arrived;
+    private Vector2 targetPos;
+
+    private void Start()
     {
-        moveHandler.OnPlayerMove += PlayerMove;
+        agent.updateRotation = false;
+        agent.updateUpAxis = false;
     }
 
-    private void OnDisable()
+    private void Update()
     {
-        moveHandler.OnPlayerMove -= PlayerMove;
-    }
-
-    private void PlayerMove(Vector2 targetPos)
-    {
-        var shortestDistance=Vector2.Distance(transform.position,targetPos);
+        if (Input.GetMouseButtonDown(0))
+        {
+            var world = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            var hitCirle = Physics2D.RaycastAll(world, Vector2.down, 0.5f, groundLayer);
+            //print(hitCirle.transform.tag+" tagg");
+            if (hitCirle != null&&hitCirle.Any(x=>x.transform.tag!="Enemy"))
+            {
+                targetPos = hitCirle[0].point;
+                agent.SetDestination(targetPos);
+            }
+            
+        }
     }
 }
