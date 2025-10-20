@@ -17,6 +17,7 @@ public class PlayerManager : MonoBehaviour
     {
         agent.updateRotation = false;
         agent.updateUpAxis = false;
+        agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
     }
 
     private void Update()
